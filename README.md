@@ -20,3 +20,17 @@ console.log(myUrl.hostname); // example.com
 console.log(myUrl.pathname); // /path
 console.log(myUrl.searchParams.get('name')); // John
 
+ Quick interview notes
+
+✅ Why Node is single-threaded yet handles many requests?
+    Uses event loop + background workers (libuv) to do IO in parallel.
+
+✅ How does require work?
+    Loads module, caches it, returns module.exports.
+
+✅ How to return JSON from Node HTTP server?
+    Set header Content-Type: application/json and use JSON.stringify.
+
+✅ What does __dirname give you?
+    The absolute path to current directory.
+
