@@ -6,3 +6,8 @@ fs.readFile('server.js', 'utf8', (err, data) => {
   console.log(data);
 });
 
+const path = require('path');
+
+console.log(__dirname);                    // current folder
+console.log(path.join(__dirname, 'test')); // /current/path/test
+
