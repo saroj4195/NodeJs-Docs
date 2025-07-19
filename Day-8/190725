@@ -1,1 +1,176 @@
+# 🚀 DAY 8 - Express Routing, Middleware & POST Handling
+
+---
+
+## 🔥 Agenda
+
+1. Separate Route Files
+2. Express Middleware Basics
+3. JSON Body Parsing with `express.json()`
+4. Handling POST Requests
+5. Practical Code Examples
+6. Interview Prep Notes
+
+---
+
+## 1️⃣ Modular Routing in Express
+
+### 🤔 Why?
+
+- Keeps code clean & manageable
+- Separates routes by feature
+
+### 📁 Folder Structure:
+
+```
+my-app/
+├── index.js
+├── routes/
+│   └── user.js
+```
+
+### 📝 routes/user.js
+
+```js
+const express = require('express');
+const router = express.Router();
+
+router.get('/', (req, res) => {
+  res.send('User Home');
+});
+
+router.get('/:id', (req, res) => {
+  res.send(`User ID: ${req.params.id}`);
+});
+
+module.exports = router;
+```
+
+### 📝 index.js
+
+```js
+const express = require('express');
+const app = express();
+const userRoutes = require('./routes/user');
+
+app.use('/users', userRoutes);
+
+app.listen(3000, () => console.log('Server started'));
+```
+
+**Try:**
+
+- `/users`
+- `/users/42`
+
+---
+
+## 2️⃣ Express Middleware Basics
+
+### ✅ Middleware = Function between Request and Response
+
+```js
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
+```
+
+### 🔍 Types:
+
+- Built-in (e.g., `express.json()`)
+- Third-party (e.g., `cors`)
+- Custom
+
+---
+
+## 3️⃣ Parse JSON with `express.json()`
+
+```js
+app.use(express.json());
+```
+
+> Without it, `req.body` will be `undefined` for JSON POST data
+
+---
+
+## 4️⃣ Handle POST Requests
+
+### 📝 index.js Example:
+
+```js
+app.post('/data', (req, res) => {
+  const body = req.body;
+  res.json({ received: body });
+});
+```
+
+### ✅ Test it with Postman or cURL:
+
+```bash
+curl -X POST http://localhost:3000/data \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Bhavik", "role": "developer"}'
+```
+
+Response:
+
+```json
+{
+  "received": {
+    "name": "Bhavik",
+    "role": "developer"
+  }
+}
+```
+
+---
+
+## 5️⃣ Practice Tasks
+
+✅ Create `product.js` route:
+
+- `/products/` -> "All products"
+- `/products/:id` -> Show product ID
+- `POST /products` -> Add new product from JSON
+
+✅ Add middleware to log time of request:
+
+```js
+app.use((req, res, next) => {
+  console.log('Time:', new Date().toISOString());
+  next();
+});
+```
+
+---
+
+## 6️⃣ Interview Prep Notes
+
+| Question                          | Answer                                      |
+| --------------------------------- | ------------------------------------------- |
+| What is middleware?               | Functions that run before response is sent. |
+| How to create custom route files? | Use `express.Router()` in separate JS file. |
+| How to parse JSON?                | `express.json()` middleware                 |
+| How to handle POST requests?      | Use `app.post()` and `req.body`             |
+
+---
+
+# ✅ Day 8 Complete!
+
+You’ve learned:
+
+- Modular routing
+- Middleware usage
+- POST + JSON handling
+
+---
+
+Next up — **Day 9**:
+
+> 🔜 Path Params vs Query Params\
+> 🔜 CRUD with Express Router 🔜 Status Codes
+
+Let me know when you're ready for Day 9!
+
 
