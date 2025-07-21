@@ -72,3 +72,13 @@ app.delete('/users/:id', (req, res) => {
 });
 
 app.listen(3000, () => console.log('Server running on port 3000'));
+
+4️⃣ HTTP Status Codes Best Practices
+
+Code	    Meaning                        Use Case
+200	           OK	                   Successful GET/PUT/DELETE
+201	        Created	                   Resource successfully created
+400	        Bad Request	               Validation errors
+401	        Unauthorized               Auth failed
+404	        Not Found	               Resource not found
+500	        Internal Server Error	   General error
