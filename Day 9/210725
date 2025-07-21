@@ -1,0 +1,74 @@
+# 🚀 Day 9 – Express Route Parameters, Query Params & CRUD
+
+---
+
+## 📘 Topics Covered
+1. Path Parameters (`req.params`)
+2. Query Parameters (`req.query`)
+3. Full CRUD with Express Router
+4. HTTP Status Codes Best Practices
+5. Interview Prep Questions
+
+---
+
+## 1️⃣ Path Parameters in Express (`req.params`)
+Path parameters are part of the URL and used to identify a specific resource.
+
+### Example:
+```js
+app.get('/users/:id', (req, res) => {
+    res.send(`User ID is ${req.params.id}`);
+});
+
+## 2️⃣ Query Parameters in Express (req.query)
+
+app.get('/search', (req, res) => {
+    const { keyword, page } = req.query;
+    res.send(`Search: ${keyword}, Page: ${page}`);
+});
+
+
+## 3️⃣ Full CRUD with Express Router
+
+const express = require('express');
+const app = express();
+app.use(express.json());
+
+let users = [
+    { id: 1, name: 'Alice' },
+    { id: 2, name: 'Bob' },
+];
+
+// Read all
+app.get('/users', (req, res) => {
+    res.json(users);
+});
+
+// Read one
+app.get('/users/:id', (req, res) => {
+    const user = users.find(u => u.id == req.params.id);
+    user ? res.json(user) : res.status(404).send('User not found');
+});
+
+// Create
+app.post('/users', (req, res) => {
+    const newUser = { id: Date.now(), ...req.body };
+    users.push(newUser);
+    res.status(201).json(newUser);
+});
+
+// Update
+app.put('/users/:id', (req, res) => {
+    const index = users.findIndex(u => u.id == req.params.id);
+    if (index === -1) return res.status(404).send('User not found');
+    users[index] = { ...users[index], ...req.body };
+    res.json(users[index]);
+});
+
+// Delete
+app.delete('/users/:id', (req, res) => {
+    users = users.filter(u => u.id != req.params.id);
+    res.send('User deleted');
+});
+
+app.listen(3000, () => console.log('Server running on port 3000'));
