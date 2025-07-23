@@ -1,1 +1,124 @@
 
+# Aura PMS - Project Setup Documentation
+
+## 📁 Clone the Repository
+
+```bash
+git clone git@github.com:bookingjini-tech/aura-pms.git
+cd aura-pms
+```
+
+## 🌱 Checkout to Development Branch
+
+```bash
+git checkout dev
+git branch
+# You should see:
+# * dev
+#   main
+```
+
+## 🌿 Create a New Feature Branch
+
+```bash
+git checkout -b feature/booking-engine
+```
+
+---
+
+## 🧩 Setup Project Dependencies
+
+### 📦 Install `pnpm` Globally
+
+```bash
+npm install -g pnpm@latest
+pnpm -v
+# Output: 10.13.1 (or latest)
+```
+
+### 📂 Open Project in VS Code (optional)
+
+```bash
+code .
+```
+
+### 📥 Install Node Modules
+
+```bash
+pnpm install
+```
+
+- Installs all dependencies and devDependencies listed in `package.json`.
+- Also runs necessary install/postinstall scripts (e.g. for Prisma, Sharp, etc.).
+- `node_modules/` is populated with all packages using the efficient `pnpm` structure.
+
+---
+
+## 🐳 Start Docker Containers
+
+### 📄 Use `docker-compose.dev.yml`
+
+```bash
+docker-compose -f docker-compose.dev.yml up -d
+```
+
+- Spins up required services like:
+  - **PostgreSQL**
+  - **Redis**
+- Creates named Docker volumes and a network:
+  - `aura-pms_postgres-data`
+  - `aura-pms_redis-data`
+  - `aura-pms_app-network`
+
+---
+
+## 🧬 Prisma Setup
+
+### 🧾 Generate Prisma Client
+
+```bash
+pnpm db:generate
+```
+
+- Runs: `npx prisma generate --schema=prisma/schema`
+- Generates Prisma client inside:
+  ```
+  node_modules/.prisma/client
+  ```
+
+### 🧱 Run Migrations
+
+```bash
+pnpm db:migrate
+```
+
+- This step runs your Prisma database migrations to sync the database schema defined in `prisma/schema.prisma`.
+
+> **Note:** If `db:migrate` is not working, check `package.json` to see if a script is defined. If not, use:
+```bash
+npx prisma migrate dev --schema=prisma/schema.prisma
+```
+
+---
+
+## ✅ Environment Setup
+
+Make sure your `.env` file exists and includes values like:
+
+```dotenv
+DATABASE_URL=postgresql://<username>:<password>@localhost:5432/<database_name>
+REDIS_URL=redis://localhost:6379
+PORT=3000
+```
+
+Adjust these based on your actual `docker-compose.dev.yml` config.
+
+---
+
+## 🚀 Project is Now Set Up
+
+You’re now ready to:
+- Start development on `feature/booking-engine` branch
+- Use `Prisma` ORM for database operations
+- Use `Docker` for local PostgreSQL and Redis
+- Run/test your API using `pnpm dev` (or whatever your dev script is)
