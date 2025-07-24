@@ -1,1 +1,53 @@
+# Final, Consolidated Booking Engine Implementation Plan
+
+## Part 1: Core Principles & Architecture
+
+*   **Core Principle: Instant Booking:** All bookings are confirmed automatically and in real-time, based on live availability from the `oco` module.
+*   **Unified Architecture:** The booking engine will be a single, new "app" module located at `src/apps/booking-engine`. It will contain logic for both the public-facing guest experience and the hotelier-facing management panel, organized into `guest/` and `management/` subdirectories.
+*   **Direct Service Consumption:** The booking engine will directly inject and consume existing services from other `aura-pms` modules, primarily the `AriOrchestrator` and `ReservationOrchestrator` from the `oco` module.
+
+## Part 2: Detailed Feature List
+
+### A. Guest-Facing Booking Engine Features:
+
+1.  **Dynamic Room Search:** Search by date, adults, and children.
+2.  **Room & Rate Display:** View available rooms with photos, descriptions, and multiple rate plans.
+3.  **Package Booking:** Book special bundled offers (e.g., "Honeymoon Package").
+4.  **Experience Booking:** Book non-accommodation services like tours and spa sessions for specific time slots.
+5.  **Paid Services (Add-ons):** Select optional extras like airport transfers.
+6.  **Promotions & Coupons:** Automatic application of promotions and manual entry for coupon codes.
+7.  **Dynamic Quote Summary:** A real-time summary of all charges.
+8.  **Secure Guest & Payment Forms:** Collect guest data and process payments.
+9.  **Booking Confirmation:** A confirmation page and notification.
+10. **Promotional & Urgency Popups:** Display marketing popups during browsing.
+11. **Website Widget:** An embeddable component for hotel websites.
+12. **Guest Portal:** View and manage bookings post-confirmation.
+
+### B. Hotelier-Facing Management App Features:
+
+1.  **Basic Setup:**
+    *   **Theme & Branding:** Configure colors, logo, favicon, and banner.
+    *   **URL Configuration:** Set up custom URLs for the booking engine and thank you page.
+2.  **Plugin Integrations:**
+    *   Configure IDs and codes for Google Tag Manager, Google Analytics, Facebook Pixel, WhatsApp Chat, and Microsoft Clarity.
+3.  **Payment Gateway & Settings:**
+    *   Configure payment gateways.
+    *   Set payment policies like Pay at Hotel, Prepaid, and Partial Payment options.
+4.  **Policy Management:**
+    *   **Booking & Cancellation Policies:** Create tiered cancellation policies.
+    *   **Booking Rules:** Define lead times and cut-off times for bookings.
+5.  **Product Management:**
+    *   **Paid Services (Add-ons):** Manage optional or mandatory extras.
+    *   **Package Management:** Create and manage bundled offers.
+    *   **Experience Management:** Manage bookable activities and day-use services.
+    *   **Additional Charges:** Manage mandatory fees like resort or tourism taxes.
+6.  **Marketing & Promotions:**
+    *   **Promotion & Coupon Management:** Create and manage discounts and offers.
+    *   **Promotional Popup Management:** Manage marketing popups.
+7.  **Analytics Dashboard:**
+    *   View KPIs like look-to-book ratio, revenue, and popular products.
+
+## Part 3: Detailed Schema Design (Prisma)
+
+*This section will consolidate all previously discussed schema additions into a single, clean definition in the final document.*
 
