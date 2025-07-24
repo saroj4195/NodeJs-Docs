@@ -1,1 +1,226 @@
+# Ultra-Granular Booking Engine Implementation Plan
+
+This document provides a comprehensive, feature-by-feature, and component-by-component plan for building the new Booking Engine within the `aura-pms` ecosystem. This plan has been refined to house all booking engine logic within a single, well-organized application directory, adhering to the existing architectural standards of `aura-pms`.
+
+---
+
+### **Part 1: Final, Detailed Directory & File Structure**
+
+The single `booking-engine` app will be organized as follows, with a clear distinction between `guest` and `management` contexts.
+
+```
+/src/apps/booking-engine/
+├── controllers/
+│   ├── guest/
+│   │   ├── availability.controller.ts
+│   │   ├── quote.controller.ts
+│   │   └── booking.controller.ts
+│   └── management/
+│       ├── settings.controller.ts
+│       ├── promotions.controller.ts
+│       └── cancellation-policy.controller.ts
+├── services/
+│   ├── guest/
+│   │   ├── availability.service.ts
+│   │   ├── quote.service.ts
+│   │   └── booking.service.ts
+│   └── management/
+│       ├── settings.service.ts
+│       ├── promotion.service.ts
+│       └── cancellation-policy.service.ts
+├── repositories/
+│   ├── guest/
+│   │   └── quote.repository.ts
+│   └── management/
+│       ├── settings.repository.ts
+│       ├── promotion.repository.ts
+│       ├── coupon.repository.ts
+│       └── cancellation-policy.repository.ts
+├── routes/
+│   ├── guest.routes.ts
+│   └── management.routes.ts
+│   └── index.ts
+├── dto/
+│   ├── guest/
+│   │   ├── availability.dto.ts
+│   │   ├── quote.dto.ts
+│   │   └── booking.dto.ts
+│   └── management/
+│       ├── settings.dto.ts
+│       ├── promotion.dto.ts
+│       └── cancellation-policy.dto.ts
+├── validations/
+│   ├── guest/
+│   │   ├── availability.validation.ts
+│   │   ├── quote.validation.ts
+│   │   └── booking.validation.ts
+│   └── management/
+│       ├── settings.validation.ts
+│       ├── promotion.validation.ts
+│       └── cancellation-policy.validation.ts
+├── types/
+│   ├── booking-engine.types.ts
+│   └── index.ts
+└── booking-engine.di-container.ts
+```
+
+### **Part 2: Component Responsibilities**
+
+*   **Controllers:** Strictly responsible for handling HTTP requests and responses. They will receive requests, use DTOs and validation schemas to parse and validate the input, call the appropriate service, and format the service's response to be sent back to the client.
+*   **Services:** Contain the core business logic. They orchestrate operations, call other services (both within the app and from other `aura-pms` modules), and use repositories for database interactions.
+*   **Repositories:** Abstract the database layer. They are responsible for all direct interactions with the Prisma client, executing queries to create, read, update, and delete records. This keeps the services clean and database-agnostic.
+*   **Routes:** Define the API endpoints, link them to controller methods, and apply any necessary middleware (e.g., for authentication on management routes).
+*   **DTOs (Data Transfer Objects):** Define the shape of data that is transferred between different layers of the application, particularly for API requests and responses.
+*   **Validations:** Contain the validation logic (likely using `zod` or `class-validator`) for the DTOs, ensuring data integrity at the entry point of the application.
+*   **Types:** Define any custom TypeScript types or interfaces used within the booking engine module.
+
+### **Part 3: Detailed Feature List**
+
+#### **A. Guest-Facing Booking Engine Features:**
+
+1.  **Dynamic Room Search:** Search by date range, number of adults, and number of children.
+2.  **Room & Rate Display:** View available room types with photos, descriptions, amenities, and multiple rate plans (e.g., "Room Only," "With Breakfast").
+3.  **Multi-Room Booking:** Ability to book multiple rooms of different types in a single transaction.
+4.  **Add-on Services:** Select optional add-ons like "Airport Transfer" or "Late Checkout."
+5.  **Promotions & Coupons:** Automatic application of eligible promotions and a field to enter and validate coupon codes.
+6.  **Dynamic Quote Summary:** A continuously updated summary of the booking cost, including room charges, taxes, add-ons, and discounts.
+7.  **Secure Guest & Payment Forms:** Collect guest information and process payments through a centralized and secure payment service.
+8.  **Booking Confirmation:** A clear confirmation page with all booking details and an email/SMS confirmation sent via the `communication` module.
+9.  **Guest Portal (Post-Booking):**
+    *   User authentication (e.g., via OTP).
+    *   View upcoming, completed, and canceled bookings.
+    *   Initiate booking cancellation based on the property's policy.
+
+#### **B. Hotelier-Facing Management App Features:**
+
+1.  **Appearance Customization:**
+    *   Upload property logo.
+    *   Select theme colors to match brand identity.
+2.  **Payment Gateway Configuration:**
+    *   Enable/disable available payment gateways.
+    *   Provide API keys and credentials for the selected gateways (to be used by the central `payment` service).
+3.  **Promotion & Coupon Management:**
+    *   Full CRUD (Create, Read, Update, Delete) for promotions (e.g., "Stay 3, Pay 2," "20% off on Weekends").
+    *   Define complex rules for promotions (e.g., applicable dates, room types, rate plans, minimum nights).
+    *   Full CRUD for coupons linked to promotions.
+    *   Monitor coupon usage.
+4.  **Booking & Cancellation Policies:**
+    *   Define booking rules (e.g., minimum/maximum lead time for booking).
+    *   A policy builder to create tiered cancellation policies (e.g., "Free cancellation up to 7 days before check-in," "50% charge within 3 days").
+5.  **Add-on Service Management:**
+    *   Full CRUD for add-on services offered on the booking engine.
+    *   Set prices and descriptions for each add-on.
+6.  **Analytics Dashboard:**
+    *   View key performance indicators (KPIs) like look-to-book ratio, total revenue, average booking value, and popular room types.
+    *   Filter analytics by date range.
+
+---
+
+### **Part 4: Detailed Schema Design (Prisma)**
+
+The following models will be added or extended.
+
+**File: `prisma/schema/core.prisma`**
+
+```prisma
+// NEW MODEL: Stores all settings for a property's booking engine
+model BookingEngineSettings {
+  id                      Int      @id @default(autoincrement())
+  propertyId              Int      @unique
+  themeColors             Json?    // { "primary": "#FFFFFF", "secondary": "#000000" }
+  logoUrl                 String?
+  enabledPaymentGateways  Json?    // ["stripe", "razorpay"]
+  cancellationPolicyId    Int?     // Link to a new CancellationPolicy model
+  bookingRules            Json?    // { "minLeadTimeHours": 24, "maxBookingMonths": 12 }
+  isActive                Boolean  @default(false)
+
+  property Property @relation(fields: [propertyId], references: [id])
+
+  @@map("be_settings")
+  @@schema("core")
+}
+
+// NEW MODEL: For creating complex, tiered cancellation policies
+model CancellationPolicy {
+    id          Int      @id @default(autoincrement())
+    propertyId  Int
+    name        String
+    description String?
+    rules       Json     // Array of rules: [{ "hoursBeforeCheckin": 72, "penaltyPercentage": 50 }, { "hoursBeforeCheckin": 24, "penaltyPercentage": 100 }]
+
+    property Property @relation(fields: [propertyId], references: [id])
+
+    @@map("cancellation_policies")
+    @@schema("core")
+}
+
+// EXTENDED MODEL: Add relation to BookingEngineSettings
+model Property {
+  // ... existing fields
+  bookingEngineSettings BookingEngineSettings?
+  cancellationPolicies  CancellationPolicy[]
+}
+
+// Promotion and Coupon models as previously defined
+model Promotion {
+  id                 String    @id @default(cuid())
+  propertyId         Int
+  name               String
+  description        String?
+  type               PromotionType
+  discountPercentage Decimal?
+  discountAmount     Decimal?
+  validFrom          DateTime
+  validTo            DateTime
+  rules              Json? // e.g., { "minNights": 2, "applicableRoomTypeIds": ["cl...", "cl..."] }
+  isActive           Boolean   @default(true)
+
+  property Property @relation("PromotionToProperty", fields: [propertyId], references: [id])
+
+  @@map("promotions")
+  @@schema("core")
+}
+
+model Coupon {
+  id          String    @id @default(cuid())
+  code        String    @unique
+  promotionId String
+  maxUses     Int?
+  useCount    Int       @default(0)
+  expiresAt   DateTime?
+  isActive    Boolean   @default(true)
+
+  promotion Promotion @relation(fields: [promotionId], references: [id])
+
+  @@map("coupons")
+  @@schema("core")
+}
+
+enum PromotionType {
+  PERCENTAGE
+  FIXED_AMOUNT
+  FREE_NIGHT
+  ROOM_UPGRADE
+}
+```
+
+**File: `prisma/schema/reservation.prisma`**
+
+```prisma
+// BookingQuote model as previously defined
+model BookingQuote {
+  id          String   @id @default(cuid())
+  propertyId  Int
+  items       Json     // Array of BookingQuoteItem (defined as a TypeScript interface)
+  appliedCouponCode String?
+  totalAmount Decimal
+  discountAmount Decimal
+  finalAmount Decimal
+  currency    String
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+
+  @@map("booking_quotes")
+  @@schema("reservation")
+}
 
