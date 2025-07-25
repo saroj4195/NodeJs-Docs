@@ -71,3 +71,349 @@ model BookingRule {
   hotel           Hotel   @relation(fields: [hotelId], references: [id])
 }
 
+
+
+model WebsiteWidget {
+  id               Int      @id @default(autoincrement())
+  widgetType       WidgetType
+  openInNewWindow  Boolean  @default(true)
+  tagline          String?
+  themeColor       String   // e.g. "#f7921b"
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+enum WidgetType {
+  Horizontal
+  Stacked
+  Floating
+  LargeButton
+  SmallButton
+  Overlay
+}
+
+model RefundPolicy {
+  id             Int             @id @default(autoincrement())
+  policyName     String
+  fromDate       DateTime
+  toDate         DateTime
+  blackoutDates  BlackoutDate[]  // One-to-many relation
+  refundRules    RefundRule[]    // One-to-many relation
+  notes          String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+model RefundRule {
+  id             Int          @id @default(autoincrement())
+  refundPolicyId Int
+  daysBefore     Int          // e.g., 3 days before
+  refundPercent  Int          // e.g., 50%
+  refundPolicy   RefundPolicy @relation(fields: [refundPolicyId], references: [id], onDelete: Cascade)
+}
+
+model BlackoutDate {
+  id             Int          @id @default(autoincrement())
+  refundPolicyId Int
+  date           DateTime
+  refundPolicy   RefundPolicy @relation(fields: [refundPolicyId], references: [id], onDelete: Cascade)
+}
+
+model PaidService {
+  id            Int      @id @default(autoincrement())
+  serviceName   String
+  serviceAmount Float    // Amount without tax
+  taxPercent    Float    // Tax in %
+  startDate     DateTime?
+  endDate       DateTime?
+  imageUrl      String?  // Path or URL to the uploaded image
+  description   String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model NotificationPopup {
+  id             Int       @id @default(autoincrement())
+  hotelId        Int
+  hotel          Hotel     @relation(fields: [hotelId], references: [id])
+
+  enabled        Boolean   @default(false)
+  title          String?
+  content        String?   // HTML or rich text content
+  checkInTime    String?
+  checkOutTime   String?
+  images         Json?     // List of image URLs or paths
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model Package {
+  id                Int       @id @default(autoincrement())
+  roomTypeId        Int
+  roomType          RoomType  @relation(fields: [roomTypeId], references: [id])
+
+  name              String
+  images            Json      // Array of image URLs
+  description       String?
+  inclusion         String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  packageRates      PackageRate[]
+}
+
+model PackageRate {
+  id                  Int       @id @default(autoincrement())
+  packageId           Int
+  package             Package   @relation(fields: [packageId], references: [id])
+
+  price               Float
+  discountPrice       Float
+  fromDate            DateTime
+  toDate              DateTime
+  blackoutDates       DateTime[] // Optional: store as an array of dates
+
+  nights              Int
+  adults              Int
+  children            Int
+  extraPersons        Int
+  extraChildren       Int
+
+  pricePerExtraPerson Float
+  pricePerExtraChild  Float
+
+  taxType             TaxType   // Enum: ROOM_BASED or CUSTOM
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
+
+
+model RoomType {
+  id          Int        @id @default(autoincrement())
+  name        String
+  packages    Package[]
+}
+
+enum TaxType {
+  ROOM_BASED
+  CUSTOM
+}
+
+model Package {
+  id              Int       @id @default(autoincrement())
+  name            String
+  price           Float
+  discountPrice   Float
+  fromDate        DateTime
+  toDate          DateTime
+  // ... and all other rate fields ...
+}
+Package:
+- Name: Homestay Package1
+- Description: 2 Nights with Meals
+- Images: [img1, img2]
+
+Rates:
+- 18 Jun to 31 Jul → ₹5000 (adult), ₹1000 (extra person)
+- 1 Aug to 15 Sep → ₹5500 (adult), ₹1200 (extra person)
+model NearbyTransport {
+  id         Int             @id @default(autoincrement())
+  hotelId    Int
+  hotel      Hotel           @relation(fields: [hotelId], references: [id])
+
+  type       TransportType   // Enum: AIRPORT, RAILWAY, BUS
+  name       String          // e.g. "Veer Savarkar International Airport"
+  distance   Float           // in kilometers
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+}
+enum TransportType {
+  AIRPORT
+  RAILWAY
+  BUS
+}
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" // or "mysql" or "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Hotel {
+  id              Int               @id @default(autoincrement())
+  name            String
+  address         String?
+  airports        LocationAirport[]
+  railways        LocationRailway[]
+  busStations     LocationBus[]
+  touristPlaces   TouristPlace[]
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+}
+
+model LocationAirport {
+  id        Int     @id @default(autoincrement())
+  name      String
+  distance  Float
+  hotel     Hotel   @relation(fields: [hotelId], references: [id])
+  hotelId   Int
+}
+
+model LocationRailway {
+  id        Int     @id @default(autoincrement())
+  name      String
+  distance  Float
+  hotel     Hotel   @relation(fields: [hotelId], references: [id])
+  hotelId   Int
+}
+
+model LocationBus {
+  id        Int     @id @default(autoincrement())
+  name      String
+  distance  Float
+  hotel     Hotel   @relation(fields: [hotelId], references: [id])
+  hotelId   Int
+}
+
+model TouristPlace {
+  id             Int      @id @default(autoincrement())
+  name           String
+  distance       Float
+  type           TouristType // 'NEAREST' or 'IMPORTANT'
+  hotel          Hotel    @relation(fields: [hotelId], references: [id])
+  hotelId        Int
+}
+
+enum TouristType {
+  NEAREST
+  IMPORTANT
+}
+
+model AdditionalCharge {
+  id             Int      @id @default(autoincrement())
+  name           String
+  percentage     Float    // Percentage of the base amount
+  taxPercentage  Float    // Tax applicable on the additional charge
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+
+enum TaxType {
+  ROOM_BASED
+  CUSTOM
+}
+
+model RoomType {
+  id       Int       @id @default(autoincrement())
+  name     String
+  packages Package[]
+}
+
+model Package {
+  id           Int         @id @default(autoincrement())
+  roomTypeId   Int
+  roomType     RoomType    @relation(fields: [roomTypeId], references: [id])
+  name         String
+  images       Json        // Array of image URLs
+  description  String?
+  inclusion    String?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  packageRates PackageRate[]
+}
+
+model PackageRate {
+  id                  Int       @id @default(autoincrement())
+  packageId           Int
+  package             Package   @relation(fields: [packageId], references: [id])
+  price               Float
+  discountPrice       Float
+  fromDate            DateTime
+  toDate              DateTime
+  blackoutDates       DateTime[] // Array of dates
+  nights              Int
+  adults              Int
+  children            Int
+  extraPersons        Int
+  extraChildren       Int
+  pricePerExtraPerson Float
+  pricePerExtraChild  Float
+  taxType             TaxType
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
+
+model PaidService {
+  id           Int      @id @default(autoincrement())
+  name         String
+  description  String?
+  image        String?
+  price        Float
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Notification {
+  id          Int      @id @default(autoincrement())
+  title       String
+  message     String
+  type        String   // Optional: PUSH, EMAIL, SMS, etc.
+  sentAt      DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model AdditionalCharge {
+  id             Int     @id @default(autoincrement())
+  name           String
+  percentage     Float
+  taxPercentage  Float
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model ExperienceBooking {
+  id              Int       @id @default(autoincrement())
+  name            String
+  maxGuests       Int
+  fromDate        DateTime
+  toDate          DateTime
+  startTime       String    // You can use DateTime if full datetime is needed
+  endTime         String
+  price           Float
+  gstPercentage   Float
+  description     String?
+  images          Json      // Array of image URLs
+  exclusions      Json      // Array of user IDs or names
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  blackoutDates   ExperienceBlackoutDate[]
+  specialPrices   ExperienceSpecialPrice[]
+}
+
+model ExperienceBlackoutDate {
+  id                  Int       @id @default(autoincrement())
+  experienceBookingId Int
+  date                DateTime
+
+  experienceBooking   ExperienceBooking @relation(fields: [experienceBookingId], references: [id])
+}
+
+model ExperienceSpecialPrice {
+  id                  Int       @id @default(autoincrement())
+  experienceBookingId Int
+  date                DateTime
+  originalPrice       Float
+  discountedPrice     Float
+
+  experienceBooking   ExperienceBooking @relation(fields: [experienceBookingId], references: [id])
+}
+
+
+
+
