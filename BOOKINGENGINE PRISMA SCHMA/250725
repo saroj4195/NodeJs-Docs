@@ -1,1 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" // or "mysql" / "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Hotel {
+  id           Int          @id @default(autoincrement())
+  name         String
+  subdomain    String       @unique
+  websiteUrl   String
+  logoUrl      String?
+  faviconUrl   String?
+  banners      Banner[]
+  theme        Theme?
+  ratings      Rating?
+  payment      PaymentSetting?
+  bookingRules BookingRule?
+}
+
+model Banner {
+  id       Int    @id @default(autoincrement())
+  imageUrl String
+  hotelId  Int
+  hotel    Hotel  @relation(fields: [hotelId], references: [id])
+}
+
+model Theme {
+  id            Int    @id @default(autoincrement())
+  backgroundHex String
+  textHex       String
+  colorHex      String
+  hotelId       Int    @unique
+  hotel         Hotel  @relation(fields: [hotelId], references: [id])
+}
+
+model Rating {
+  id             Int     @id @default(autoincrement())
+  hotelStars     Int
+  googleRating   Float?
+  tripAdvisor    Float?
+  hotelId        Int     @unique
+  hotel          Hotel   @relation(fields: [hotelId], references: [id])
+}
+
+model PaymentSetting {
+  id                Int     @id @default(autoincrement())
+  payAtHotel        Boolean
+  prepaidBooking    Boolean
+  partialPayment    Boolean
+  bankTransfer      Boolean
+  bankDetails       String?
+  qrCodeUrl         String?
+  transferPercent   Float?
+  fixedAmount       Float?
+  firstNightPrice   Boolean
+  hotelId           Int     @unique
+  hotel             Hotel   @relation(fields: [hotelId], references: [id])
+}
+
+model BookingRule {
+  id              Int     @id @default(autoincrement())
+  advanceDays     Int
+  infantAge       Int
+  childAgeRange   String  // e.g., "3-16"
+  cutOffTime      String
+  hotelId         Int     @unique
+  hotel           Hotel   @relation(fields: [hotelId], references: [id])
+}
 
