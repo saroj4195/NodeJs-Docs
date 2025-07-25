@@ -134,3 +134,48 @@ docker rmi <id>
 ---
 
 ✅ That’s it for **Day 2**! You now understand the **heart of Docker** — images and containers.
+
+
+---
+
+## 🧱 Visual Diagram: Docker Image vs Container
+
+```
+    +-----------------------+
+    |    Docker Image       |   <--- Blueprint (Read-only)
+    |-----------------------|
+    |  ✅ OS (Ubuntu)        |
+    |  ✅ Python 3.10        |
+    |  ✅ Your Code (app.py) |
+    |  ✅ Flask, Pandas      |
+    +-----------------------+
+              |
+              |  🛠 Run the image
+              v
+    +-----------------------+
+    |  Docker Container     |   <--- Running Instance (Read/Write)
+    |-----------------------|
+    |  OS (Ubuntu)          |
+    |  Python 3.10          |
+    |  Your Code (app.py)   |
+    |  Flask, Pandas        |
+    |  Running App          |
+    +-----------------------+
+           ^       ^
+           |       |
+       You can start, stop, modify this live container
+```
+
+---
+
+## 🔄 Flow Summary
+
+```
+Dockerfile ───► docker build ───► Docker Image ───► docker run ───► Container
+```
+
+- **Dockerfile**: Your instructions.
+- **Image**: A frozen template (can't run on its own).
+- **Container**: A live, running environment built from the image.
+
+---
