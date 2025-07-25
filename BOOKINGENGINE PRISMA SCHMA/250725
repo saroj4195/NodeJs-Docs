@@ -1,88 +1,184 @@
+# Prisma Schema: Booking Engine
+
+This document outlines the Prisma schema for the booking engine module, detailing all the models, enums, and their relationships.
+
+---
+
+### Generator and Datasource
+
+```prisma
+/// @namespace Prisma Client
 generator client {
   provider = "prisma-client-js"
 }
 
+/// @namespace Datasource
 datasource db {
-  provider = "postgresql" // or "mysql" / "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+```
 
-model Hotel {
-  id           Int          @id @default(autoincrement())
-  name         String
-  subdomain    String       @unique
-  websiteUrl   String
-  logoUrl      String?
-  faviconUrl   String?
-  banners      Banner[]
-  theme        Theme?
-  ratings      Rating?
-  payment      PaymentSetting?
-  bookingRules BookingRule?
+---
+
+## Booking Engine Setup
+
+This section defines the core models for managing booking engine instances and their fundamental settings.
+
+```prisma
+/**
+ * Represents a single booking engine instance's configuration. This is the 
+ * central model that connects to most other models in the booking engine.
+ */
+model BookingEngineSetup {
+  id         Int      @id @default(autoincrement())
+  name       String
+  subdomain  String   @unique
+  address    String?
+  websiteUrl String?
+  logoUrl    String?
+  faviconUrl String?
+  banners       Banner[]
+  theme         Theme?
+  ratings       Rating?
+  payment       PaymentSetting?
+  bookingRules  BookingRule?
+  airports      LocationAirport[]
+  railways      LocationRailway[]
+  busStations   LocationBus[]
+  touristPlaces TouristPlace[]
+  notifications NotificationPopup[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy Int?
+  updatedBy Int?
+  isTrash   Boolean  @default(false)
+  isActive  Boolean  @default(true)
 }
 
+/**
+ * Represents a promotional banner image displayed on the booking engine.
+ */
 model Banner {
-  id       Int    @id @default(autoincrement())
-  imageUrl String
-  hotelId  Int
-  hotel    Hotel  @relation(fields: [hotelId], references: [id])
+  id                   Int                @id @default(autoincrement())
+  imageUrl             String
+  bookingEngineSetupId Int
+  bookingEngineSetup   BookingEngineSetup @relation(fields: [bookingEngineSetupId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy Int?
+  updatedBy Int?
+  isTrash   Boolean  @default(false)
+  isActive  Boolean  @default(true)
 }
 
+/**
+ * Defines the color scheme and visual theme for the booking engine.
+ */
 model Theme {
-  id            Int    @id @default(autoincrement())
-  backgroundHex String
-  textHex       String
-  colorHex      String
-  hotelId       Int    @unique
-  hotel         Hotel  @relation(fields: [hotelId], references: [id])
+  id                   Int                @id @default(autoincrement())
+  backgroundHex        String
+  textHex              String
+  colorHex             String
+  bookingEngineSetupId Int                @unique
+  bookingEngineSetup   BookingEngineSetup @relation(fields: [bookingEngineSetupId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy Int?
+  updatedBy Int?
+  isTrash   Boolean  @default(false)
+  isActive  Boolean  @default(true)
 }
 
+/**
+ * Stores ratings from different platforms.
+ */
 model Rating {
-  id             Int     @id @default(autoincrement())
-  hotelStars     Int
-  googleRating   Float?
-  tripAdvisor    Float?
-  hotelId        Int     @unique
-  hotel          Hotel   @relation(fields: [hotelId], references: [id])
+  id                   Int                @id @default(autoincrement())
+  hotelStars           Int
+  googleRating         Float?
+  tripAdvisor          Float?
+  bookingEngineSetupId Int                @unique
+  bookingEngineSetup   BookingEngineSetup @relation(fields: [bookingEngineSetupId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy Int?
+  updatedBy Int?
+  isTrash   Boolean  @default(false)
+  isActive  Boolean  @default(true)
 }
 
+/**
+ * Configures the payment options available for bookings.
+ */
 model PaymentSetting {
-  id                Int     @id @default(autoincrement())
-  payAtHotel        Boolean
-  prepaidBooking    Boolean
-  partialPayment    Boolean
-  bankTransfer      Boolean
-  bankDetails       String?
-  qrCodeUrl         String?
-  transferPercent   Float?
-  fixedAmount       Float?
-  firstNightPrice   Boolean
-  hotelId           Int     @unique
-  hotel             Hotel   @relation(fields: [hotelId], references: [id])
+  id                   Int                @id @default(autoincrement())
+  payAtHotel           Boolean            @default(false)
+  prepaidBooking       Boolean            @default(false)
+  partialPayment       Boolean            @default(false)
+  bankTransfer         Boolean            @default(false)
+  bankDetails          String?
+  qrCodeUrl            String?
+  transferPercent      Float?
+  fixedAmount          Float?
+  firstNightPrice      Boolean            @default(false)
+  bookingEngineSetupId Int                @unique
+  bookingEngineSetup   BookingEngineSetup @relation(fields: [bookingEngineSetupId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy Int?
+  updatedBy Int?
+  isTrash   Boolean  @default(false)
+  isActive  Boolean  @default(true)
 }
 
+/**
+ * Defines specific rules and policies for making a reservation.
+ */
 model BookingRule {
-  id              Int     @id @default(autoincrement())
-  advanceDays     Int
-  infantAge       Int
-  childAgeRange   String  // e.g., "3-16"
-  cutOffTime      String
-  hotelId         Int     @unique
-  hotel           Hotel   @relation(fields: [hotelId], references: [id])
+  id                   Int                @id @default(autoincrement())
+  advanceDays          Int
+  infantAge            Int
+  childAgeRange        String
+  cutOffTime           String
+  bookingEngineSetupId Int                @unique
+  bookingEngineSetup   BookingEngineSetup @relation(fields: [bookingEngineSetupId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy Int?
+  updatedBy Int?
+  isTrash   Boolean  @default(false)
+  isActive  Boolean  @default(true)
 }
+```
 
+---
 
+## Website Integration & Widgets
 
+Models related to embedding the booking engine on external websites.
+
+```prisma
+/**
+ * Represents a booking widget that can be embedded on an external website.
+ */
 model WebsiteWidget {
-  id               Int      @id @default(autoincrement())
-  widgetType       WidgetType
-  openInNewWindow  Boolean  @default(true)
-  tagline          String?
-  themeColor       String   // e.g. "#f7921b"
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id              Int        @id @default(autoincrement())
+  widgetType      WidgetType
+  openInNewWindow Boolean    @default(true)
+  tagline         String?
+  themeColor      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy Int?
+  updatedBy Int?
+  isTrash   Boolean  @default(false)
+  isActive  Boolean  @default(true)
 }
 
+/**
+ * Defines the different layout styles for the WebsiteWidget.
+ */
 enum WidgetType {
   Horizontal
   Stacked
@@ -91,249 +187,161 @@ enum WidgetType {
   SmallButton
   Overlay
 }
+```
 
+---
+
+## Policies & Services
+
+This section covers refund policies, paid add-on services, and other charges.
+
+```prisma
+/**
+ * Defines a refund policy for a specific period.
+ */
 model RefundPolicy {
-  id             Int             @id @default(autoincrement())
-  policyName     String
-  fromDate       DateTime
-  toDate         DateTime
-  blackoutDates  BlackoutDate[]  // One-to-many relation
-  refundRules    RefundRule[]    // One-to-many relation
-  notes          String?
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
+  id         Int      @id @default(autoincrement())
+  policyName String
+  fromDate   DateTime
+  toDate     DateTime
+  notes      String?
+  blackoutDates BlackoutDate[]
+  refundRules   RefundRule[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy Int?
+  updatedBy Int?
+  isTrash   Boolean  @default(false)
+  isActive  Boolean  @default(true)
 }
 
+/**
+ * A rule within a RefundPolicy that specifies the refund percentage based on
+ * how many days before check-in a cancellation occurs.
+ */
 model RefundRule {
   id             Int          @id @default(autoincrement())
+  daysBefore     Int
+  refundPercent  Int
   refundPolicyId Int
-  daysBefore     Int          // e.g., 3 days before
-  refundPercent  Int          // e.g., 50%
-  refundPolicy   RefundPolicy @relation(fields: [refundPolicyId], references: [id], onDelete: Cascade)
+  refundPolicy   RefundPolicy @relation(fields: [refundPolicyId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy Int?
+  updatedBy Int?
+  isTrash   Boolean  @default(false)
+  isActive  Boolean  @default(true)
 }
 
+/**
+ * A specific date on which a refund policy is not applicable.
+ */
 model BlackoutDate {
   id             Int          @id @default(autoincrement())
-  refundPolicyId Int
   date           DateTime
-  refundPolicy   RefundPolicy @relation(fields: [refundPolicyId], references: [id], onDelete: Cascade)
+  refundPolicyId Int
+  refundPolicy   RefundPolicy @relation(fields: [refundPolicyId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy Int?
+  updatedBy Int?
+  isTrash   Boolean  @default(false)
+  isActive  Boolean  @default(true)
 }
 
+/**
+ * Represents a paid service or add-on that guests can purchase.
+ */
 model PaidService {
-  id            Int      @id @default(autoincrement())
+  id            Int       @id @default(autoincrement())
   serviceName   String
-  serviceAmount Float    // Amount without tax
-  taxPercent    Float    // Tax in %
+  description   String?
+  imageUrl      String?
+  serviceAmount Float
+  taxPercent    Float
   startDate     DateTime?
   endDate       DateTime?
-  imageUrl      String?  // Path or URL to the uploaded image
-  description   String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy Int?
+  updatedBy Int?
+  isTrash   Boolean  @default(false)
+  isActive  Boolean  @default(true)
 }
 
-model NotificationPopup {
-  id             Int       @id @default(autoincrement())
-  hotelId        Int
-  hotel          Hotel     @relation(fields: [hotelId], references: [id])
-
-  enabled        Boolean   @default(false)
-  title          String?
-  content        String?   // HTML or rich text content
-  checkInTime    String?
-  checkOutTime   String?
-  images         Json?     // List of image URLs or paths
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-}
-
-model Package {
-  id                Int       @id @default(autoincrement())
-  roomTypeId        Int
-  roomType          RoomType  @relation(fields: [roomTypeId], references: [id])
-
-  name              String
-  images            Json      // Array of image URLs
-  description       String?
-  inclusion         String?
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-
-  packageRates      PackageRate[]
-}
-
-model PackageRate {
-  id                  Int       @id @default(autoincrement())
-  packageId           Int
-  package             Package   @relation(fields: [packageId], references: [id])
-
-  price               Float
-  discountPrice       Float
-  fromDate            DateTime
-  toDate              DateTime
-  blackoutDates       DateTime[] // Optional: store as an array of dates
-
-  nights              Int
-  adults              Int
-  children            Int
-  extraPersons        Int
-  extraChildren       Int
-
-  pricePerExtraPerson Float
-  pricePerExtraChild  Float
-
-  taxType             TaxType   // Enum: ROOM_BASED or CUSTOM
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
-}
-
-
-model RoomType {
-  id          Int        @id @default(autoincrement())
-  name        String
-  packages    Package[]
-}
-
-enum TaxType {
-  ROOM_BASED
-  CUSTOM
-}
-
-model Package {
-  id              Int       @id @default(autoincrement())
-  name            String
-  price           Float
-  discountPrice   Float
-  fromDate        DateTime
-  toDate          DateTime
-  // ... and all other rate fields ...
-}
-Package:
-- Name: Homestay Package1
-- Description: 2 Nights with Meals
-- Images: [img1, img2]
-
-Rates:
-- 18 Jun to 31 Jul → ₹5000 (adult), ₹1000 (extra person)
-- 1 Aug to 15 Sep → ₹5500 (adult), ₹1200 (extra person)
-model NearbyTransport {
-  id         Int             @id @default(autoincrement())
-  hotelId    Int
-  hotel      Hotel           @relation(fields: [hotelId], references: [id])
-
-  type       TransportType   // Enum: AIRPORT, RAILWAY, BUS
-  name       String          // e.g. "Veer Savarkar International Airport"
-  distance   Float           // in kilometers
-  createdAt  DateTime        @default(now())
-  updatedAt  DateTime        @updatedAt
-}
-enum TransportType {
-  AIRPORT
-  RAILWAY
-  BUS
-}
-generator client {
-  provider = "prisma-client-js"
-}
-
-datasource db {
-  provider = "postgresql" // or "mysql" or "sqlite"
-  url      = env("DATABASE_URL")
-}
-
-model Hotel {
-  id              Int               @id @default(autoincrement())
-  name            String
-  address         String?
-  airports        LocationAirport[]
-  railways        LocationRailway[]
-  busStations     LocationBus[]
-  touristPlaces   TouristPlace[]
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
-}
-
-model LocationAirport {
-  id        Int     @id @default(autoincrement())
-  name      String
-  distance  Float
-  hotel     Hotel   @relation(fields: [hotelId], references: [id])
-  hotelId   Int
-}
-
-model LocationRailway {
-  id        Int     @id @default(autoincrement())
-  name      String
-  distance  Float
-  hotel     Hotel   @relation(fields: [hotelId], references: [id])
-  hotelId   Int
-}
-
-model LocationBus {
-  id        Int     @id @default(autoincrement())
-  name      String
-  distance  Float
-  hotel     Hotel   @relation(fields: [hotelId], references: [id])
-  hotelId   Int
-}
-
-model TouristPlace {
-  id             Int      @id @default(autoincrement())
-  name           String
-  distance       Float
-  type           TouristType // 'NEAREST' or 'IMPORTANT'
-  hotel          Hotel    @relation(fields: [hotelId], references: [id])
-  hotelId        Int
-}
-
-enum TouristType {
-  NEAREST
-  IMPORTANT
-}
-
+/**
+ * Represents additional charges that can be applied to a booking,
+ * such as a "Service Charge".
+ */
 model AdditionalCharge {
-  id             Int      @id @default(autoincrement())
-  name           String
-  percentage     Float    // Percentage of the base amount
-  taxPercentage  Float    // Tax applicable on the additional charge
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id            Int      @id @default(autoincrement())
+  name          String
+  percentage    Float
+  taxPercentage Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy Int?
+  updatedBy Int?
+  isTrash   Boolean  @default(false)
+  isActive  Boolean  @default(true)
 }
+```
 
+---
 
-enum TaxType {
-  ROOM_BASED
-  CUSTOM
-}
+## Rooms, Packages & Rates
 
+Models for managing room types, special packages, and their corresponding rates.
+
+```prisma
+/**
+ * Represents a type of room in the hotel (e.g., "Deluxe King").
+ * This is a simplified model for the booking engine. The full RoomType
+ * definition resides in the Setup module.
+ */
 model RoomType {
   id       Int       @id @default(autoincrement())
   name     String
   packages Package[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy Int?
+  updatedBy Int?
+  isTrash   Boolean  @default(false)
+  isActive  Boolean  @default(true)
 }
 
+/**
+ * Represents a special package deal, which bundles a room with other
+ * inclusions or has special rate conditions.
+ */
 model Package {
-  id           Int         @id @default(autoincrement())
-  roomTypeId   Int
-  roomType     RoomType    @relation(fields: [roomTypeId], references: [id])
-  name         String
-  images       Json        // Array of image URLs
-  description  String?
-  inclusion    String?
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  inclusion   String?
+  images      Json
+  roomTypeId  Int
+  roomType    RoomType @relation(fields: [roomTypeId], references: [id])
   packageRates PackageRate[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy Int?
+  updatedBy Int?
+  isTrash   Boolean  @default(false)
+  isActive  Boolean  @default(true)
 }
 
+/**
+ * Defines the rate for a package for a specific date range and occupancy.
+ */
 model PackageRate {
-  id                  Int       @id @default(autoincrement())
-  packageId           Int
-  package             Package   @relation(fields: [packageId], references: [id])
+  id                  Int        @id @default(autoincrement())
   price               Float
   discountPrice       Float
   fromDate            DateTime
   toDate              DateTime
-  blackoutDates       DateTime[] // Array of dates
+  blackoutDates       DateTime[]
   nights              Int
   adults              Int
   children            Int
@@ -342,78 +350,221 @@ model PackageRate {
   pricePerExtraPerson Float
   pricePerExtraChild  Float
   taxType             TaxType
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
+  packageId           Int
+  package             Package    @relation(fields: [packageId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy Int?
+  updatedBy Int?
+  isTrash   Boolean  @default(false)
+  isActive  Boolean  @default(true)
 }
 
-model PaidService {
-  id           Int      @id @default(autoincrement())
-  name         String
-  description  String?
-  image        String?
-  price        Float
-  isActive     Boolean  @default(true)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+/**
+ * Specifies how taxes are calculated for a rate.
+ */
+enum TaxType {
+  ROOM_BASED
+  CUSTOM
+}
+```
+
+---
+
+## Location & Nearby Places
+
+Models for storing information about locations and points of interest near the property.
+
+```prisma
+/**
+ * Stores information about a nearby airport.
+ */
+model LocationAirport {
+  id                   Int                @id @default(autoincrement())
+  name                 String
+  distance             Float
+  bookingEngineSetupId Int
+  bookingEngineSetup   BookingEngineSetup @relation(fields: [bookingEngineSetupId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy Int?
+  updatedBy Int?
+  isTrash   Boolean  @default(false)
+  isActive  Boolean  @default(true)
 }
 
+/**
+ * Stores information about a nearby railway station.
+ */
+model LocationRailway {
+  id                   Int                @id @default(autoincrement())
+  name                 String
+  distance             Float
+  bookingEngineSetupId Int
+  bookingEngineSetup   BookingEngineSetup @relation(fields: [bookingEngineSetupId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy Int?
+  updatedBy Int?
+  isTrash   Boolean  @default(false)
+  isActive  Boolean  @default(true)
+}
+
+/**
+ * Stores information about a nearby bus station.
+ */
+model LocationBus {
+  id                   Int                @id @default(autoincrement())
+  name                 String
+  distance             Float
+  bookingEngineSetupId Int
+  bookingEngineSetup   BookingEngineSetup @relation(fields: [bookingEngineSetupId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy Int?
+  updatedBy Int?
+  isTrash   Boolean  @default(false)
+  isActive  Boolean  @default(true)
+}
+
+/**
+ * Represents a tourist attraction or point of interest near the property.
+ */
+model TouristPlace {
+  id                   Int                @id @default(autoincrement())
+  name                 String
+  distance             Float
+  type                 TouristType
+  bookingEngineSetupId Int
+  bookingEngineSetup   BookingEngineSetup @relation(fields: [bookingEngineSetupId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy Int?
+  updatedBy Int?
+  isTrash   Boolean  @default(false)
+  isActive  Boolean  @default(true)
+}
+
+/**
+ * Categorizes a tourist place.
+ */
+enum TouristType {
+  NEAREST
+  IMPORTANT
+}
+```
+
+---
+
+## Notifications & Communication
+
+Models related to displaying notifications on the booking engine and for internal tracking.
+
+```prisma
+/**
+ * A pop-up notification displayed on the booking engine website.
+ */
+model NotificationPopup {
+  id                   Int                @id @default(autoincrement())
+  enabled              Boolean            @default(false)
+  title                String?
+  content              String?
+  checkInTime          String?
+  checkOutTime         String?
+  images               Json?
+  bookingEngineSetupId Int
+  bookingEngineSetup   BookingEngineSetup @relation(fields: [bookingEngineSetupId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy Int?
+  updatedBy Int?
+  isTrash   Boolean  @default(false)
+  isActive  Boolean  @default(true)
+}
+
+/**
+ * A generic notification record, for logging communications like emails or SMS.
+ * This can be used for auditing or internal tracking.
+ */
 model Notification {
-  id          Int      @id @default(autoincrement())
-  title       String
-  message     String
-  type        String   // Optional: PUSH, EMAIL, SMS, etc.
-  sentAt      DateTime @default(now())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+  title     String
+  message   String
+  type      String?
+  sentAt    DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy Int?
+  updatedBy Int?
+  isTrash   Boolean  @default(false)
+  isActive  Boolean  @default(true)
 }
+```
 
-model AdditionalCharge {
-  id             Int     @id @default(autoincrement())
-  name           String
-  percentage     Float
-  taxPercentage  Float
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-}
+---
 
+## Experiences & Activities
+
+This section defines models for bookable experiences and activities offered by the property.
+
+```prisma
+/**
+ * Represents a bookable experience or activity offered,
+ * such as a city tour, cooking class, or spa treatment.
+ */
 model ExperienceBooking {
-  id              Int       @id @default(autoincrement())
-  name            String
-  maxGuests       Int
-  fromDate        DateTime
-  toDate          DateTime
-  startTime       String    // You can use DateTime if full datetime is needed
-  endTime         String
-  price           Float
-  gstPercentage   Float
-  description     String?
-  images          Json      // Array of image URLs
-  exclusions      Json      // Array of user IDs or names
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-
-  blackoutDates   ExperienceBlackoutDate[]
-  specialPrices   ExperienceSpecialPrice[]
+  id            Int       @id @default(autoincrement())
+  name          String
+  maxGuests     Int
+  fromDate      DateTime
+  toDate        DateTime
+  startTime     String
+  endTime       String
+  price         Float
+  gstPercentage Float
+  description   String?
+  images        Json
+  exclusions    Json?
+  blackoutDates ExperienceBlackoutDate[]
+  specialPrices ExperienceSpecialPrice[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy Int?
+  updatedBy Int?
+  isTrash   Boolean  @default(false)
+  isActive  Boolean  @default(true)
 }
 
+/**
+ * A specific date when an experience is not available.
+ */
 model ExperienceBlackoutDate {
-  id                  Int       @id @default(autoincrement())
-  experienceBookingId Int
+  id                  Int               @id @default(autoincrement())
   date                DateTime
-
+  experienceBookingId Int
   experienceBooking   ExperienceBooking @relation(fields: [experienceBookingId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy Int?
+  updatedBy Int?
+  isTrash   Boolean  @default(false)
+  isActive  Boolean  @default(true)
 }
 
+/**
+ * A special, discounted price for an experience on a specific date.
+ */
 model ExperienceSpecialPrice {
-  id                  Int       @id @default(autoincrement())
-  experienceBookingId Int
+  id                  Int               @id @default(autoincrement())
   date                DateTime
   originalPrice       Float
   discountedPrice     Float
-
+  experienceBookingId Int
   experienceBooking   ExperienceBooking @relation(fields: [experienceBookingId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy Int?
+  updatedBy Int?
+  isTrash   Boolean  @default(false)
+  isActive  Boolean  @default(true)
 }
-
-
-
-
