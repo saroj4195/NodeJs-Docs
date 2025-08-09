@@ -1,4 +1,3 @@
----
 
 ## Day 8 – Advanced Arrays
 
