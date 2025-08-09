@@ -49,28 +49,34 @@ let x = 10;
 let y = 3.5;
 ```
 
-Day 3: Booleans, Comparison & Logical Operators
-✅ 1. Comparison Operators
+---
+
+## Day 3: Booleans, Comparison & Logical Operators
+
+✅ **1. Comparison Operators**
 
 These return a Boolean (true or false).
-Operator	Meaning	Example	Result
-==	Equal (loose)	5 == '5'	true
-===	Equal (strict)	5 === '5'	false
-!=	Not equal	5 != '5'	false
-!==	Not equal (strict)	5 !== '5'	true
->	Greater than	10 > 5	true
-<	Less than	3 < 1	false
->=	Greater than or equal	5 >= 5	true
-<=	Less than or equal	4 <= 2	false
 
-✅ 2. Logical Operators
+| Operator | Meaning                 | Example     | Result |
+|----------|------------------------|-------------|--------|
+| ==       | Equal (loose)           | 5 == '5'    | true   |
+| ===      | Equal (strict)          | 5 === '5'   | false  |
+| !=       | Not equal               | 5 != '5'    | false  |
+| !==      | Not equal (strict)      | 5 !== '5'   | true   |
+| >        | Greater than            | 10 > 5      | true   |
+| <        | Less than               | 3 < 1       | false  |
+| >=       | Greater than or equal   | 5 >= 5      | true   |
+| <=       | Less than or equal      | 4 <= 2      | false  |
 
-Used to combine or negate conditions.
-Operator	Name	Example	Result
-&&	AND	true && false	false
-`		`	OR
-!	NOT	!true	false
+✅ **2. Logical Operators**
 
+| Operator | Name  | Example          | Result |
+|----------|-------|------------------|--------|
+| &&       | AND   | true && false    | false  |
+| \|\|   | OR    | true \|\| false | true   |
+| !        | NOT   | !true            | false  |
+
+```javascript
 let age = 20;
 console.log(age >= 18); // true
 
@@ -82,34 +88,36 @@ console.log(isSenior); // false
 
 console.log(!true); // false
 console.log(!false); // true
+```
 
+---
 
-4.Conditional Statements (if, else, else if, switch)
+## Conditional Statements
 
-1. if Statement
+### 1. if Statement
 
-Run a block of code if a condition is true.
-
+```javascript
 let age = 18;
-
 if (age >= 18) {
   console.log("You are an adult.");
 }
+```
 
+### 2. if...else Statement
+
+```javascript
 let age = 16;
-
 if (age >= 18) {
   console.log("You can vote.");
 } else {
   console.log("You are too young to vote.");
 }
+```
 
- 3. else if Chain
+### 3. else if Chain
 
-Test multiple conditions in order.
-
+```javascript
 let score = 85;
-
 if (score >= 90) {
   console.log("Grade: A");
 } else if (score >= 75) {
@@ -119,13 +127,12 @@ if (score >= 90) {
 } else {
   console.log("Grade: Fail");
 }
+```
 
-4. switch Statement
+### 4. switch Statement
 
-Used when you have many exact matches to test.
-
+```javascript
 let day = "Tuesday";
-
 switch (day) {
   case "Monday":
     console.log("Start of the week.");
@@ -139,51 +146,183 @@ switch (day) {
   default:
     console.log("Some other day.");
 }
+```
 
- 5. Ternary Operator (shortcut for if...else)
+### 5. Ternary Operator
 
+```javascript
 let age = 20;
 let message = age >= 18 ? "Adult" : "Minor";
 console.log(message);
+```
 
+---
 
- Day 5: Loops – for, while, do...while, and loop control
- 1. for Loop (most commonly used)
+## Day 5: Loops – for, while, do...while, and Loop Control
 
+### 1. for Loop
+
+```javascript
 for (let i = 1; i <= 5; i++) {
   console.log("Count:", i);
 }
+```
 
-✅ 2. while Loop
+### 2. while Loop
 
+```javascript
 let i = 1;
 while (i <= 5) {
   console.log("While count:", i);
   i++;
 }
+```
 
-✅ 3. do...while Loop
+### 3. do...while Loop
 
+```javascript
 let i = 1;
 do {
   console.log("Do-While count:", i);
   i++;
 } while (i <= 5);
+```
 
-✅ 4. Loop Control: break and continue
-🔹 break: Exit the loop
+### 4. Loop Control: break
 
+```javascript
 for (let i = 1; i <= 10; i++) {
   if (i === 5) break;
   console.log(i);
 }
+```
 
- Day 6: Functions in JavaScript
+---
 
-✅ Example 1: Basic Function
+## Day 6: Functions in JavaScript
 
+### Example 1: Basic Function
+
+```javascript
 function sayHello() {
   console.log("Hello, world!");
 }
+sayHello();
+```
 
-sayHello(); // Output: Hello, world!
+### Parameters vs Arguments
+
+- **Parameters**: Variables listed in the function definition.
+- **Arguments**: Values passed to the function when called.
+
+```javascript
+function greet(name) {
+  console.log("Hello, " + name + "!");
+}
+greet("Bhavik");
+```
+
+### Example 2: Function with Return Value
+
+```javascript
+function add(a, b) {
+  return a + b;
+}
+let result = add(5, 3);
+console.log(result);
+```
+
+### Function Expressions
+
+```javascript
+const multiply = function(x, y) {
+  return x * y;
+};
+```
+
+### Arrow Functions
+
+```javascript
+const square = (n) => n * n;
+console.log(square(6));
+```
+
+---
+
+## Day 7: JavaScript Scope & Variable Declarations
+
+### 1. What is Scope?
+
+Scope refers to the accessibility of variables.
+
+| Type         | Description |
+|--------------|-------------|
+| Global Scope | Declared outside any function/block. Accessible anywhere. |
+| Function Scope | Declared inside a function. Only accessible inside that function. |
+| Block Scope | Declared inside {}. Only accessible inside that block (applies to let and const). |
+
+### 2. var, let, and const
+
+| Feature        | var            | let             | const           |
+|----------------|---------------|----------------|----------------|
+| Scope          | Function scoped | Block scoped   | Block scoped   |
+| Re-declaration | Allowed       | ❌ Not allowed  | ❌ Not allowed  |
+| Reassignment   | ✅ Allowed    | ✅ Allowed     | ❌ Not allowed  |
+| Hoisted?       | ✅ Yes        | ✅ Yes (TDZ)   | ✅ Yes (TDZ)   |
+
+### Examples
+
+#### Global Scope
+
+```javascript
+var a = 10;
+function printA() {
+  console.log(a);
+}
+printA();
+```
+
+#### Function Scope
+
+```javascript
+function test() {
+  var b = 20;
+  console.log(b);
+}
+test();
+```
+
+#### Block Scope
+
+```javascript
+{
+  let x = 100;
+  const y = 200;
+  console.log(x, y);
+}
+```
+
+#### var is NOT block-scoped
+
+```javascript
+{
+  var z = 300;
+}
+console.log(z);
+```
+
+#### const Must Be Initialized
+
+```javascript
+const age; // ❌ Error
+```
+
+#### Hoisting Example
+
+```javascript
+console.log(score); // undefined
+var score = 50;
+
+console.log(num); // ❌ ReferenceError
+let num = 10;
+```
