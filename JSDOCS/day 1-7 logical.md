@@ -1,9 +1,4 @@
-Alright — I’ll make you a **huge collection** of **practical & logical JavaScript coding questions** for **Day 1 to Day 7**, so you can practice applying the theory you’ve learned.
 
-I’ll organize them **by topic** (Day 1 → Day 7) and make them **Markdown-friendly** so you can store them.
-These won’t be just theory — they will be **actual coding tasks** you can run and test.
-
----
 
 ```markdown
 # JavaScript Practical & Logical Questions – Day 1 to Day 7
@@ -107,8 +102,3 @@ These won’t be just theory — they will be **actual coding tasks** you can ru
 
 ---
 ```
-
----
-
-I can also **prepare this as a downloadable `.md` file** so you can keep it with your Day 1–7 notes and quizzes.
-Do you want me to merge this **practical/logical set + the 50 quiz questions** into **one big file** so it’s all in one place?
