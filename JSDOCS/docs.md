@@ -1,11 +1,3 @@
-Got it ✅
-I’ll rewrite **Day 5** in more detail so that you have **clear explanations + examples for each loop**.
-I’ll also make the **entire Day 1–7 markdown file** cleaner and easy to read for future reference.
-
-Here’s your **complete updated markdown file**:
-
----
-
 ````markdown
 # JavaScript Learning Notes – Day 1 to Day 7
 
@@ -213,14 +205,4 @@ fruits.shift();       // Remove first
 for (let fruit of fruits) {
   console.log(fruit);
 }
-```
 
----
-
-```
-
----
-
-If you want, I can now **append all the quizzes from Day 1–7** below this markdown so that you have **study material + practice questions** in one file.  
-Do you want me to do that?
-```
