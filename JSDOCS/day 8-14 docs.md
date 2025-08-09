@@ -1,271 +1,319 @@
-# JavaScript Learning Notes – Day 8 to Day 14
 
-## **Day 8: Advanced Arrays**
-**Topics Covered:**
-- forEach
-- map
-- filter
-- reduce
-- find & findIndex
-- some & every
-- sort
-- Chaining methods
+````markdown
+# JavaScript Learning Notes – Day 8 to Day 14  
+*(Concepts + Examples, no quizzes)*
 
-**Examples:**
-```js
-let numbers = [1, 2, 3, 4, 5];
+---
 
-// forEach
-numbers.forEach(num => console.log(num));
+## **Day 8 – Advanced Arrays**
 
-// map
-let doubled = numbers.map(num => num * 2);
-console.log(doubled);
+### 1. forEach()
+- Executes a provided function once for each array element.
+```javascript
+const nums = [1, 2, 3];
+nums.forEach(num => console.log(num * 2)); // 2, 4, 6
+````
 
-// filter
-let evens = numbers.filter(num => num % 2 === 0);
-console.log(evens);
+### 2. map()
 
-// reduce
-let sum = numbers.reduce((acc, curr) => acc + curr, 0);
-console.log(sum);
+* Returns a new array with the results of applying a function to each element.
 
-// find
-let firstEven = numbers.find(num => num % 2 === 0);
-console.log(firstEven);
+```javascript
+const doubled = nums.map(num => num * 2);
+console.log(doubled); // [2, 4, 6]
+```
 
-// some
-console.log(numbers.some(num => num > 4)); // true
+### 3. filter()
 
-// every
-console.log(numbers.every(num => num > 0)); // true
+* Returns a new array with only the elements that pass a test.
 
-// sort
-let sortedDesc = [...numbers].sort((a, b) => b - a);
-console.log(sortedDesc);
+```javascript
+const evens = nums.filter(num => num % 2 === 0);
+console.log(evens); // [2]
+```
 
-// Chaining
-let processed = numbers
-  .filter(num => num % 2 !== 0)
-  .map(num => num * 3)
-  .reduce((a, b) => a + b, 0);
-console.log(processed);
+### 4. reduce()
+
+* Reduces an array to a single value.
+
+```javascript
+const sum = nums.reduce((total, num) => total + num, 0);
+console.log(sum); // 6
+```
+
+### 5. find()
+
+* Returns the first element that matches a condition.
+
+```javascript
+const found = nums.find(num => num > 1);
+console.log(found); // 2
+```
+
+### 6. findIndex()
+
+* Returns the index of the first element that matches a condition.
+
+```javascript
+const index = nums.findIndex(num => num > 1);
+console.log(index); // 1
+```
+
+### 7. some()
+
+* Returns `true` if at least one element matches a condition.
+
+```javascript
+console.log(nums.some(num => num > 2)); // true
+```
+
+### 8. every()
+
+* Returns `true` if all elements match a condition.
+
+```javascript
+console.log(nums.every(num => num > 0)); // true
+```
+
+### 9. sort()
+
+* Sorts the array in place.
+
+```javascript
+const arr = [4, 2, 1, 3];
+arr.sort((a, b) => a - b);
+console.log(arr); // [1, 2, 3, 4]
 ```
 
 ---
 
-## **Day 9: Objects Deep Dive**
-**Topics Covered:**
-- Object creation
-- Accessing properties
-- Adding/updating/deleting properties
-- Methods in objects
-- `this` keyword
-- Object destructuring
-- Nested objects
+## **Day 9 – Objects (Deep Dive)**
 
-**Examples:**
-```js
-let person = {
-  name: "Alice",
-  age: 25,
-  greet: function() {
-    console.log(`Hello, my name is ${this.name}`);
-  },
-  address: {
-    city: "New York",
-    zip: 10001
+### 1. Creating Objects
+
+```javascript
+const person = { name: 'Alice', age: 25 };
+```
+
+### 2. Accessing Properties
+
+```javascript
+console.log(person.name); // Alice
+console.log(person['age']); // 25
+```
+
+### 3. Nested Objects
+
+```javascript
+const user = {
+  name: 'John',
+  address: { city: 'NY', zip: 10001 }
+};
+console.log(user.address.city); // NY
+```
+
+### 4. Adding & Deleting Properties
+
+```javascript
+user.email = 'john@example.com';
+delete user.zip;
+```
+
+### 5. Object Methods & `this`
+
+```javascript
+const car = {
+  brand: 'Toyota',
+  start: function() {
+    console.log(`${this.brand} started`);
   }
 };
+car.start(); // Toyota started
+```
 
-// Access
-console.log(person.name);
-console.log(person["age"]);
+### 6. Destructuring
 
-// Update
-person.age = 26;
-
-// Add
-person.job = "Developer";
-
-// Delete
-delete person.job;
-
-// Method call
-person.greet();
-
-// Destructuring
-let { name, age } = person;
+```javascript
+const { name, age } = person;
 console.log(name, age);
-
-// Nested
-console.log(person.address.city);
 ```
 
 ---
 
-## **Day 10: DOM Manipulation**
-**Topics Covered:**
-- Selecting elements (`getElementById`, `querySelector`, etc.)
-- Changing content
-- Changing styles
-- Creating and appending elements
-- Removing elements
+## **Day 10 – Functions (In-depth)**
 
-**Examples:**
-```html
-<div id="demo">Hello</div>
-<script>
-let element = document.getElementById("demo");
-element.textContent = "Hello, JavaScript!";
-element.style.color = "blue";
+### 1. Function Declaration
 
-// Create element
-let newDiv = document.createElement("div");
-newDiv.textContent = "I am new here!";
-document.body.appendChild(newDiv);
-
-// Remove element
-element.remove();
-</script>
-```
-
----
-
-## **Day 11: Events & Event Listeners**
-**Topics Covered:**
-- Adding event listeners
-- Event object
-- Event bubbling
-- Event delegation
-
-**Examples:**
-```html
-<button id="btn">Click Me</button>
-<ul id="list">
-  <li>Item 1</li>
-  <li>Item 2</li>
-</ul>
-
-<script>
-document.getElementById("btn").addEventListener("click", function(event) {
-  console.log("Button clicked!");
-  console.log(event.type);
-});
-
-// Event delegation
-document.getElementById("list").addEventListener("click", function(e) {
-  if (e.target.tagName === "LI") {
-    console.log("List item clicked:", e.target.textContent);
-  }
-});
-</script>
-```
-
----
-
-## **Day 12: ES6+ Features**
-**Topics Covered:**
-- Template literals
-- Spread and Rest operators
-- Destructuring
-- Default parameters
-- ES6 modules (import/export)
-
-**Examples:**
-```js
-// Template literals
-let name = "John";
-console.log(`Hello, ${name}!`);
-
-// Spread
-let arr1 = [1, 2, 3];
-let arr2 = [...arr1, 4, 5];
-console.log(arr2);
-
-// Rest
-function sum(...numbers) {
-  return numbers.reduce((a, b) => a + b, 0);
-}
-console.log(sum(1, 2, 3));
-
-// Destructuring
-let user = { username: "alice", age: 22 };
-let { username, age } = user;
-console.log(username, age);
-
-// Default parameter
-function greet(msg = "Hi") {
-  console.log(msg);
-}
-greet();
-```
-
----
-
-## **Day 13: Higher-Order Functions**
-**Topics Covered:**
-- Functions as arguments
-- Functions returning functions
-- Closures
-- Practical use of higher-order functions
-
-**Examples:**
-```js
+```javascript
 function greet(name) {
-  return function(message) {
-    console.log(`${message}, ${name}`);
-  };
+  return `Hello, ${name}`;
 }
+```
 
-let greetJohn = greet("John");
-greetJohn("Hello"); // Hello, John
+### 2. Function Expression
 
-// Callback
-function processUserInput(callback) {
-  let name = "Alice";
-  callback(name);
+```javascript
+const greet2 = function(name) {
+  return `Hello, ${name}`;
+};
+```
+
+### 3. Arrow Functions
+
+```javascript
+const greet3 = name => `Hello, ${name}`;
+```
+
+### 4. Default Parameters
+
+```javascript
+function sum(a, b = 5) {
+  return a + b;
 }
-processUserInput(function(name) {
-  console.log("Hello " + name);
-});
+```
+
+### 5. Rest Parameters
+
+```javascript
+function addAll(...nums) {
+  return nums.reduce((acc, num) => acc + num, 0);
+}
+```
+
+### 6. Scope
+
+* Local vs Global variables
+
+```javascript
+let globalVar = 'I am global';
+function test() {
+  let localVar = 'I am local';
+}
 ```
 
 ---
 
-## **Day 14: Asynchronous JavaScript**
-**Topics Covered:**
-- setTimeout & setInterval
-- Promises
-- async/await
-- Fetch API
+## **Day 11 – Scope & Closures**
 
-**Examples:**
-```js
-// setTimeout
-setTimeout(() => console.log("Hello after 2s"), 2000);
+### 1. Scope Types
 
-// setInterval
-let counter = 0;
-let interval = setInterval(() => {
-  counter++;
-  console.log(counter);
-  if (counter === 5) clearInterval(interval);
-}, 1000);
+* **Global Scope**
+* **Function Scope**
+* **Block Scope**
 
-// Promise
-let myPromise = new Promise((resolve, reject) => {
-  let success = true;
-  if (success) resolve("Done!");
-  else reject("Error!");
-});
-myPromise.then(res => console.log(res)).catch(err => console.log(err));
+### 2. Hoisting
 
-// async/await with fetch
-async function getData() {
-  let response = await fetch("https://jsonplaceholder.typicode.com/posts/1");
-  let data = await response.json();
-  console.log(data);
-}
-getData();
+```javascript
+console.log(a); // undefined
+var a = 5;
 ```
+
+### 3. Closures
+
+* A closure is a function that remembers variables from its outer scope.
+
+```javascript
+function outer() {
+  let count = 0;
+  return function inner() {
+    count++;
+    return count;
+  }
+}
+const counter = outer();
+console.log(counter()); // 1
+console.log(counter()); // 2
+```
+
+---
+
+## **Day 12 – Arrays Deep Dive / Iteration Methods**
+
+### 1. Multi-dimensional Arrays
+
+```javascript
+const matrix = [
+  [1, 2],
+  [3, 4]
+];
+console.log(matrix[1][0]); // 3
+```
+
+### 2. Iterating Arrays
+
+```javascript
+for (let num of [1, 2, 3]) console.log(num);
+[1, 2, 3].forEach(n => console.log(n));
+```
+
+### 3. Performance Note
+
+* `for` loop is fastest, `forEach` is easier to read.
+
+---
+
+## **Day 13 – Higher-Order Functions**
+
+### 1. Functions as Arguments
+
+```javascript
+function greetUser(name, formatter) {
+  return formatter(name);
+}
+console.log(greetUser('John', name => `Hello, ${name}`));
+```
+
+### 2. Functions Returning Functions
+
+```javascript
+function multiplier(factor) {
+  return num => num * factor;
+}
+const double = multiplier(2);
+console.log(double(5)); // 10
+```
+
+### 3. Callback Functions
+
+```javascript
+setTimeout(() => console.log('Done!'), 1000);
+```
+
+---
+
+## **Day 14 – JavaScript Objects (Advanced)**
+
+### 1. Object.keys / Object.values / Object.entries
+
+```javascript
+const obj = { a: 1, b: 2 };
+console.log(Object.keys(obj)); // ['a', 'b']
+console.log(Object.values(obj)); // [1, 2]
+console.log(Object.entries(obj)); // [['a', 1], ['b', 2]]
+```
+
+### 2. Merging Objects
+
+```javascript
+const obj1 = { a: 1 };
+const obj2 = { b: 2 };
+const merged = { ...obj1, ...obj2 };
+```
+
+### 3. Object.freeze / Object.seal
+
+```javascript
+const frozen = Object.freeze({ name: 'Bob' });
+// frozen.name = 'Alice'; // won't work
+```
+
+### 4. Shallow vs Deep Copy
+
+```javascript
+// Shallow copy
+const copy = { ...obj };
+// Deep copy
+const deepCopy = JSON.parse(JSON.stringify(obj));
+```
+
+---
