@@ -122,3 +122,143 @@ OpenTelemetry observability for monitoring
 This is a sophisticated, enterprise-grade hospitality management system built with modern, production-ready technologies and architectural patterns designed for scalability, maintainability, and high performance.
 
 Credits used: 1.43
+
+
+
+Fetch the basic hotel information
+Fetch the min rates for each day for 2 month
+occupancy based search
+fetch the room type and rate plan
+fetch the inventory and rates
+Fetch the Cancellation Policy, Child Policy, Hotel Policy, Terms and Conditions, 
+fetch the near by places
+fetch the lat and long for map
+fetch the Nearby transportation options and distance
+
+
+
+Core Features to Implement
+
+Step 1: Load Hotel & Property Information
+Purpose: Show hotel page
+APIs 
+----------------
+fetch-hotel-info
+fetch-hotel-amenities
+fetch-hotel-banners
+nearby-places
+map (lat/long)
+transportation-info
+
+
+Step 2: Availability Calendar (Rate Discovery)
+Purpose: Let guest explore prices by date
+APIs 
+----------------
+fetch the calendar-rates (min rate)
+
+
+Step 3: Date & Occupancy Selection
+Purpose: Narrow down options
+Guest selects:
+Check-in / Check-out
+Rooms
+Adults
+Children (with ages)
+
+
+
+Step 4: Real-Time Inventory & Rate Fetch
+Most critical step
+API
+inventory-rate-fetch
+Check room inventory for selected dates
+Validate occupancy rules
+Apply child / extra adult charges
+Apply promotions
+Apply taxes (GST)
+Apply add-ons (optional)
+
+
+Step 5: Deal & Value Highlighting
+Optional but powerful
+APIs
+connected-ota-rates
+
+
+Step 6: Policies & Rules Display
+Critical for trust
+APIs
+cancellation-polic
+hotel-policy
+child-policy
+terms-and-conditions
+
+
+Step 7: Add-ons & Paid Services
+Upsell moment
+APIs
+paid-services
+add-on-charges
+
+
+
+Step 8: Guest Details & Auto Registration
+API
+user-signin / send-otp / verify-otp
+
+
+Step 9: Booking Creation (Pre-Payment)
+API
+bookings-new
+
+
+Step 10: Payment Selection
+Guest chooses:
+Prepaid
+Partial
+Pay at Hotel
+Bank Transfer
+
+
+Step 11: Payment Gateway Processing
+APIs
+Payment gateway redirect
+
+
+Step 12: Booking Confirmation
+What happens on success
+Booking status → CONFIRMED
+Inventory permanently deducted
+Voucher generated
+Email/SMS sent to:
+Guest
+Hotel
+APIs
+voucher-generator
+be-notifications
+
+
+
+Step 13: My Account Access
+API
+guest-booking-list
+Guest can:
+View booking
+Download voucher
+Cancel booking
+
+
+Step 14: Cancellation & Refund (If applicable)
+APIs
+check-cancel-eligibility
+create-refund
+refund-details
+
+
+
+
+
+
+
+
