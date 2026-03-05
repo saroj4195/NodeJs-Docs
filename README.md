@@ -1,4 +1,4 @@
-ased on my analysis of the HotelKite-X project, here's a comprehensive overview of the tech stack and packages used:
+based on my analysis of the HotelKite-X project, here's a comprehensive overview of the tech stack and packages used:
 
 🏗️ Project Overview
 HotelKite-X is an enterprise-grade Property Management System (PMS) for hotels built with a microservices-inspired modular architecture. It's a comprehensive hospitality management platform with 14 specialized modules and 190+ database models.
